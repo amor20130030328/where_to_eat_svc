@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gy.mapper.FoodMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gy.entity.Food">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="priority" property="priority" />
+    </resultMap>
+
+
+    <select id="queryPage" resultMap="BaseResultMap">
+        select *  from  food
+        <if test="name != null and name !=''">
+            <bind name="_name" value="'%'+ name +'%'"/>
+            name like #{_name}
+        </if>
+    </select>
+
+    <select id="queryById" resultMap="BaseResultMap">
+        select * from food
+        where id = #{id}
+    </select>
+
+    <insert id="addFood" parameterType="com.gy.entity.Food">
+        insert into food(name,priority)
+        values(#{name},#{priority})
+    </insert>
+
+    <insert id="batchInsert">
+        insert into food(name,priority)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.name},#{item.priority})
+        </foreach>
+    </insert>
+
+    <update id="editFood">
+        update food
+        set
+        name = #{name},
+        priority = #{priority}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFood">
+        delete from food
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteByIds">
+        delete from food
+        where id in (
+        <foreach collection="ids" item="id" separator=",">
+            #{id}
+        </foreach>
+        )
+    </delete>
+
+</mapper>
